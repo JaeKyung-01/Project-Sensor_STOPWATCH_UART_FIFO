@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module uart_command_controller (
+module uart_controller (
     input       clk,
     input       reset,
     input       sw_watch,
