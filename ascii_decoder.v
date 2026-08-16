@@ -8,8 +8,8 @@ module ascii_decoder (
 
 );
 
-    always @(data) begin
-        o_ascii = 8'h00;
+    always @(*) begin
+        o_ascii = 12'h000;
         if (rx_done) begin
             case (data)
                 8'h72: begin  //r
