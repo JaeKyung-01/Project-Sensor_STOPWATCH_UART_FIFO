@@ -1,33 +1,33 @@
 `timescale 1ns / 1ps
 
 module top_dht11 (
-    input clk,
-    input reset,
-    input btnR,
-    input btnL,
-    input btnU,
-    input btnD,
-    input sw_dht11,
-    inout dht11_io,
+    input        clk,
+    input        reset,
+    input        btnR,
+    input        btnL,
+    input        btnU,
+    input        btnD,
+    input        sw_dht11,
+    inout        dht11_io,
     output [3:0] fnd_com,
     output [7:0] fnd_data
 );
 
-    wire w_btn_start;
-    wire w_btn_temp;
-    wire w_btn_humi;
-    wire w_btn_fahr;
-    wire w_dht11_start;
+    wire        w_btn_start;
+    wire        w_btn_temp;
+    wire        w_btn_humi;
+    wire        w_btn_fahr;
+    wire        w_dht11_start;
     wire [15:0] w_humidity;
     wire [15:0] w_temperature;
-    wire w_done;
-    wire w_valid;
-    wire [7:0] w_fahrenheit;
+    wire        w_done;
+    wire        w_valid;
+    wire [ 7:0] w_fahrenheit;
     wire [13:0] w_fnd_in;
 
-    reg [15:0] humidity_latched;
-    reg [15:0] temperature_latched;
-    reg [1:0] display_mode;
+    reg  [15:0] humidity_latched;
+    reg  [15:0] temperature_latched;
+    reg  [ 1:0] display_mode;
 
     localparam MODE_TEMP = 2'd0;
     localparam MODE_HUMI = 2'd1;
@@ -35,10 +35,10 @@ module top_dht11 (
 
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            humidity_latched <= 16'd0;
+            humidity_latched    <= 16'd0;
             temperature_latched <= 16'd0;
         end else if (w_done && w_valid) begin
-            humidity_latched <= w_humidity;
+            humidity_latched    <= w_humidity;
             temperature_latched <= w_temperature;
         end
     end
@@ -84,14 +84,14 @@ module top_dht11 (
     end
 
     dht11 U_DHT11 (
-        .clk(clk),
-        .reset(reset),
-        .start(w_dht11_start),
-        .humidity(w_humidity),
+        .clk        (clk),
+        .reset      (reset),
+        .start      (w_dht11_start),
+        .humidity   (w_humidity),
         .temperature(w_temperature),
-        .done(w_done),
-        .valid(w_valid),
-        .dht11_io(dht11_io)
+        .done       (w_done),
+        .valid      (w_valid),
+        .dht11_io   (dht11_io)
     );
 
     assign w_fahrenheit = (temperature_latched[15:8] * 8'd9) / 8'd5 + 8'd32;
@@ -102,48 +102,48 @@ module top_dht11 (
     w_fahrenheit;
 
     fnd_controller U_FND_CNTL (
-        .clk(clk),
-        .reset(reset),
-        .fnd_in(w_fnd_in),
-        .fnd_com(fnd_com),
+        .clk     (clk),
+        .reset   (reset),
+        .fnd_in  (w_fnd_in),
+        .fnd_com (fnd_com),
         .fnd_data(fnd_data)
     );
 
 endmodule
 
 module dht11 (
-    input clk,
-    input reset,
-    input start,
+    input         clk,
+    input         reset,
+    input         start,
     output [15:0] humidity,
     output [15:0] temperature,
-    output done,
-    output valid,
-    inout dht11_io
+    output        done,
+    output        valid,
+    inout         dht11_io
 );
 
     dht11_controller U_DHT11_CONTROLLER (
-        .clk(clk),
-        .reset(reset),
-        .start(start),
-        .humidity(humidity),
+        .clk        (clk),
+        .reset      (reset),
+        .start      (start),
+        .humidity   (humidity),
         .temperature(temperature),
-        .done(done),
-        .valid(valid),
-        .dht11_io(dht11_io)
+        .done       (done),
+        .valid      (valid),
+        .dht11_io   (dht11_io)
     );
 
 endmodule
 
 module dht11_controller (
-    input clk,
-    input reset,
-    input start,
-    output [15:0] humidity,
-    output [15:0] temperature,
-    output reg done,
-    output reg valid,
-    inout dht11_io
+    input             clk,
+    input             reset,
+    input             start,
+    output     [15:0] humidity,
+    output     [15:0] temperature,
+    output reg        done,
+    output reg        valid,
+    inout             dht11_io
 );
 
     localparam [2:0]
@@ -161,30 +161,30 @@ SYNC_MEAS_HIGH = 2'd2;
 
     localparam [14:0] TIMEOUT_US = 15'd100;
 
-    reg [2:0] c_state;
-    reg [2:0] n_state;
-    reg [14:0] tick_count_reg;
-    reg [14:0] tick_count_next;
-    reg [5:0] bit_count_reg;
-    reg [5:0] bit_count_next;
-    reg [39:0] data_reg;
-    reg [39:0] data_next;
-    reg io_control;
-    reg dht11_io_reg;
-    reg dht11_io_next;
-    reg [1:0] sync_phase_reg;
-    reg [1:0] sync_phase_next;
-    reg wait_released_reg;
-    reg wait_released_next;
-    reg data_phase_reg;
-    reg data_phase_next;
-    reg dht_sync1;
-    reg dht_sync2;
+    reg  [ 2:0] c_state;
+    reg  [ 2:0] n_state;
+    reg  [14:0] tick_count_reg;
+    reg  [14:0] tick_count_next;
+    reg  [ 5:0] bit_count_reg;
+    reg  [ 5:0] bit_count_next;
+    reg  [39:0] data_reg;
+    reg  [39:0] data_next;
+    reg         io_control;
+    reg         dht11_io_reg;
+    reg         dht11_io_next;
+    reg  [ 1:0] sync_phase_reg;
+    reg  [ 1:0] sync_phase_next;
+    reg         wait_released_reg;
+    reg         wait_released_next;
+    reg         data_phase_reg;
+    reg         data_phase_next;
+    reg         dht_sync1;
+    reg         dht_sync2;
 
-    wire dht11_in;
-    wire tick_us;
-    wire [7:0] checksum;
-    wire [7:0] calc_checksum;
+    wire        dht11_in;
+    wire        tick_us;
+    wire [ 7:0] checksum;
+    wire [ 7:0] calc_checksum;
 
     assign dht11_io = io_control ? dht11_io_reg : 1'bz;
     assign dht11_in = dht_sync2;
@@ -194,10 +194,10 @@ SYNC_MEAS_HIGH = 2'd2;
     assign calc_checksum = data_reg[39:32] + data_reg[31:24] + data_reg[23:16] + data_reg[15:8];
 
     dht_11_tick_us U_TICK_US (
-        .clk(clk),
-        .reset(reset),
-        .run_stop(1'b1),
-        .clear(1'b0),
+        .clk      (clk),
+        .reset    (reset),
+        .run_stop (1'b1),
+        .clear    (1'b0),
         .o_tick_us(tick_us)
     );
 
@@ -213,54 +213,54 @@ SYNC_MEAS_HIGH = 2'd2;
 
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            c_state <= IDLE;
-            tick_count_reg <= 15'd0;
-            bit_count_reg <= 6'd0;
-            data_reg <= 40'd0;
-            dht11_io_reg <= 1'b1;
-            sync_phase_reg <= SYNC_WAIT_LOW;
-            data_phase_reg <= 1'b0;
+            c_state           <= IDLE;
+            tick_count_reg    <= 15'd0;
+            bit_count_reg     <= 6'd0;
+            data_reg          <= 40'd0;
+            dht11_io_reg      <= 1'b1;
+            sync_phase_reg    <= SYNC_WAIT_LOW;
+            data_phase_reg    <= 1'b0;
             wait_released_reg <= 1'b0;
         end else begin
-            c_state <= n_state;
-            tick_count_reg <= tick_count_next;
-            bit_count_reg <= bit_count_next;
-            data_reg <= data_next;
-            dht11_io_reg <= dht11_io_next;
-            sync_phase_reg <= sync_phase_next;
-            data_phase_reg <= data_phase_next;
+            c_state           <= n_state;
+            tick_count_reg    <= tick_count_next;
+            bit_count_reg     <= bit_count_next;
+            data_reg          <= data_next;
+            dht11_io_reg      <= dht11_io_next;
+            sync_phase_reg    <= sync_phase_next;
+            data_phase_reg    <= data_phase_next;
             wait_released_reg <= wait_released_next;
         end
     end
 
     always @(*) begin
-        n_state = c_state;
-        tick_count_next = tick_count_reg;
-        bit_count_next = bit_count_reg;
-        data_next = data_reg;
-        dht11_io_next = dht11_io_reg;
-        sync_phase_next = sync_phase_reg;
-        data_phase_next = data_phase_reg;
+        n_state            = c_state;
+        tick_count_next    = tick_count_reg;
+        bit_count_next     = bit_count_reg;
+        data_next          = data_reg;
+        dht11_io_next      = dht11_io_reg;
+        sync_phase_next    = sync_phase_reg;
+        data_phase_next    = data_phase_reg;
         wait_released_next = wait_released_reg;
-        io_control = 1'b0;
-        done = 1'b0;
-        valid = 1'b0;
+        io_control         = 1'b0;
+        done               = 1'b0;
+        valid              = 1'b0;
 
         case (c_state)
             IDLE: begin
-                tick_count_next = 15'd0;
-                bit_count_next = 6'd0;
-                sync_phase_next = SYNC_WAIT_LOW;
-                data_phase_next = 1'b0;
+                tick_count_next    = 15'd0;
+                bit_count_next     = 6'd0;
+                sync_phase_next    = SYNC_WAIT_LOW;
+                data_phase_next    = 1'b0;
                 wait_released_next = 1'b0;
                 if (start) begin
-                    n_state = START;
+                    n_state         = START;
                     tick_count_next = 15'd0;
                 end
             end
 
             START: begin
-                io_control = 1'b1;
+                io_control    = 1'b1;
                 dht11_io_next = 1'b0;
                 if (tick_us) begin
                     if (tick_count_reg == 15'd18999) begin
@@ -277,11 +277,11 @@ SYNC_MEAS_HIGH = 2'd2;
                 if (!wait_released_reg) begin
                     if (dht11_in) begin
                         wait_released_next = 1'b1;
-                        tick_count_next = 15'd0;
+                        tick_count_next    = 15'd0;
                     end else if (tick_us) begin
                         if (tick_count_reg >= TIMEOUT_US) begin
                             tick_count_next = 15'd0;
-                            n_state = IDLE;
+                            n_state         = IDLE;
                         end else begin
                             tick_count_next = tick_count_reg + 1'b1;
                         end
@@ -290,11 +290,11 @@ SYNC_MEAS_HIGH = 2'd2;
                     if (!dht11_in) begin
                         tick_count_next = 15'd0;
                         sync_phase_next = SYNC_WAIT_LOW;
-                        n_state = SYNC;
+                        n_state         = SYNC;
                     end else if (tick_us) begin
                         if (tick_count_reg >= TIMEOUT_US) begin
                             tick_count_next = 15'd0;
-                            n_state = IDLE;
+                            n_state         = IDLE;
                         end else begin
                             tick_count_next = tick_count_reg + 1'b1;
                         end
@@ -316,7 +316,7 @@ SYNC_MEAS_HIGH = 2'd2;
                         end else if (tick_us) begin
                             if (tick_count_reg >= TIMEOUT_US) begin
                                 tick_count_next = 15'd0;
-                                n_state = IDLE;
+                                n_state         = IDLE;
                             end else begin
                                 tick_count_next = tick_count_reg + 1'b1;
                             end
@@ -326,13 +326,13 @@ SYNC_MEAS_HIGH = 2'd2;
                     SYNC_MEAS_HIGH: begin
                         if (!dht11_in) begin
                             tick_count_next = 15'd0;
-                            bit_count_next = 6'd0;
+                            bit_count_next  = 6'd0;
                             data_phase_next = 1'b0;
-                            n_state = DATA;
+                            n_state         = DATA;
                         end else if (tick_us) begin
                             if (tick_count_reg >= TIMEOUT_US) begin
                                 tick_count_next = 15'd0;
-                                n_state = IDLE;
+                                n_state         = IDLE;
                             end else begin
                                 tick_count_next = tick_count_reg + 1'b1;
                             end
@@ -353,7 +353,7 @@ SYNC_MEAS_HIGH = 2'd2;
                     end else if (tick_us) begin
                         if (tick_count_reg >= TIMEOUT_US) begin
                             tick_count_next = 15'd0;
-                            n_state = IDLE;
+                            n_state         = IDLE;
                         end else begin
                             tick_count_next = tick_count_reg + 1'b1;
                         end
@@ -363,7 +363,7 @@ SYNC_MEAS_HIGH = 2'd2;
                         if (tick_us) begin
                             if (tick_count_reg >= TIMEOUT_US) begin
                                 tick_count_next = 15'd0;
-                                n_state = IDLE;
+                                n_state         = IDLE;
                             end else begin
                                 tick_count_next = tick_count_reg + 1'b1;
                             end
@@ -393,12 +393,12 @@ SYNC_MEAS_HIGH = 2'd2;
             end
 
             default: begin
-                n_state = IDLE;
-                tick_count_next = 15'd0;
-                bit_count_next = 6'd0;
-                data_next = 40'd0;
-                sync_phase_next = SYNC_WAIT_LOW;
-                data_phase_next = 1'b0;
+                n_state            = IDLE;
+                tick_count_next    = 15'd0;
+                bit_count_next     = 6'd0;
+                data_next          = 40'd0;
+                sync_phase_next    = SYNC_WAIT_LOW;
+                data_phase_next    = 1'b0;
                 wait_released_next = 1'b0;
             end
         endcase

@@ -19,7 +19,7 @@ module fifo #(
 
 
     register_file #(
-        .WIDTH(2)
+        .WIDTH(WIDTH)
     ) U_REG_FILE (
         .clk  (clk),
         .waddr(w_wptr),
@@ -31,7 +31,7 @@ module fifo #(
     );
 
     control_unit #(
-        .WIDTH(2)
+        .WIDTH(WIDTH)
     ) U_CONTROL_UNIT (
         .clk  (clk),
         .reset(reset),
